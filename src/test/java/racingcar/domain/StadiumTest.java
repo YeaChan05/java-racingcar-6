@@ -1,50 +1,58 @@
 package racingcar.domain;
 
-import camp.nextstep.edu.missionutils.Randoms;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
+import racingcar.utils.StubRandomNumberGenerator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
 class StadiumTest {
     private Stadium stadium;
     private int gameCount;
+    private ByteArrayOutputStream outputMessage;
 
-    @Test
-    void 경주_진행_테스트() {
+
+    @BeforeEach
+    void setUp() {
         gameCount = 5;
-        List<String> names = List.of("김희겸","엄성준","김현진");
+        List<String> names = List.of("김희겸", "엄성준", "김현진");
         stadium = Stadium.of(gameCount, names);
-        try (MockedStatic<Randoms> randoms = mockStatic(Randoms.class)) {
-            given(Randoms.pickNumberInRange(0, 9)).willReturn(5);
-            stadium.startRace();
-            stadium.getUsers()
-                    .forEach(user -> {
-                        assertThat(user.getProceedCount()).isEqualTo(gameCount);
-                        assertThat(user.getOutputMessage()).contains(user.getName() + " : ");
-                    });
-        }
+        outputMessage = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputMessage));
     }
 
     @Test
-    void 우승자_출력_테스트() {
-        List<String> names = List.of("김희겸","엄성준","김현진");
-        gameCount = 5;
+    void 경주_출력_테스트() {
+        setUp();
 
-        stadium = spy(Stadium.of(gameCount, names));
+        stadium.startRace();
+        stadium.getUsers().forEach(user -> assertThat(user.getOutputMessage()).contains(user.getName() + " : "));
+    }
 
-        ByteArrayOutputStream outputMessage = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputMessage));
+    @Test
+    void 경주_진행도_테스트() {
+        setUp();
+        User.setRandomNumberGenerator(new StubRandomNumberGenerator());
+        stadium.startRace();
 
-        when(stadium.getWinner()).thenReturn(List.of(User.of("엄성준")));
+        stadium.getUsers().forEach(user ->{
+            assertThat(user.getProceedCount()).isEqualTo(gameCount);
+        });
+    }
+
+    @Test
+    void 우승자_테스트() {
+        setUp();
+        assertThat(stadium.getWinner()).containsExactly(stadium.getUsers().get(2));
+    }
+
+    @Test
+    void 결과_출력_테스트() {
         Stadium.displayResult(List.of(User.of("엄성준")));
         assertThat("최종 우승자 : 엄성준\r\n").isEqualTo(outputMessage.toString());
     }
-
 }
