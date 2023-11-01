@@ -1,6 +1,7 @@
 package racingcar.domain;
 
 import racingcar.utils.RandomNumberGenerator;
+import racingcar.utils.SingleDigitNumberGenerator;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class User {
     private User(String name) {
         this.name = name;
         this.proceedCount = 0;
+        setRandomNumberGenerator(new SingleDigitNumberGenerator());
     }
 
     public static User of(String name) {
