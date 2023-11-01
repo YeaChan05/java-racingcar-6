@@ -1,6 +1,6 @@
 package racingcar.domain;
 
-import camp.nextstep.edu.missionutils.Randoms;
+import racingcar.utils.RandomNumberGenerator;
 
 import java.util.List;
 
@@ -10,6 +10,7 @@ import java.util.List;
 public class User {
     private final String name;
     private int proceedCount;
+    private static RandomNumberGenerator randomNumberGenerator;
 
     private User(String name) {
         this.name = name;
@@ -36,7 +37,7 @@ public class User {
      * 차가 움직일지 결정
      */
     public void decideProceed() {
-        int randomNum = Randoms.pickNumberInRange(0, 9);
+        int randomNum = randomNumberGenerator.pickNumberInRange(0, 9);
         if (randomNum >= 4) proceedCar();
     }
 
@@ -50,5 +51,9 @@ public class User {
     }
     public int getProceedCount() {
         return this.proceedCount;
+    }
+
+    public static void setRandomNumberGenerator(RandomNumberGenerator randomNumberGenerator) {
+        User.randomNumberGenerator = randomNumberGenerator;
     }
 }
