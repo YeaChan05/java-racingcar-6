@@ -41,3 +41,7 @@
   - ~~RacingOutputManager~~
     - ~~경주 진행시 사용자의 전진 정도 출력 처리.~~
     - ~~경주 결과 출력 처리.~~
+- ~~RandomNumberGenerator~~
+  - ~~Randoms.pickNumberInRange()의 의존관계를 낮추기 위한 추상 클래스.~~
+  - ~~SingleDigitNumberGenerator~~
+    - ~~실제 User에서 사용할 랜덤값 호출 담당~~
